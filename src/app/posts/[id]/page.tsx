@@ -17,7 +17,7 @@ function usePost(id: number) {
       });
   }, []);
 
-  const deletePost = (id: number, onSuccess: () => void) => {
+  const deletePost = (onSuccess: () => void) => {
     apiFetch(`/api/v1/posts/${id}`, {
       method: "DELETE",
     }).then(onSuccess);
@@ -43,7 +43,6 @@ function usePostComments(id: number) {
   }, []);
 
   const deleteComment = (
-    id: number,
     commentId: number,
     onSuccess: (data: any) => void
   ) => {
@@ -59,7 +58,6 @@ function usePostComments(id: number) {
   };
 
   const writeComment = (
-    id: number,
     content: string,
     onSuccess: (data: any) => void
   ) => {
@@ -97,7 +95,7 @@ function PostInfo({
   const deletePost = () => {
     if (!confirm(`${post.id}번 글을 정말로 삭제하시겠습니까?`)) return;
 
-    _deletePost(post.id, () => {
+    _deletePost(() => {
       router.replace("/posts");
     });
   };
@@ -124,10 +122,8 @@ function PostInfo({
 }
 
 function PostCommentWrite({
-  id,
   postCommentsState,
 }: {
-  id: number;
   postCommentsState: ReturnType<typeof usePostComments>;
 }) {
   const { writeComment } = postCommentsState;
@@ -157,7 +153,7 @@ function PostCommentWrite({
       return;
     }
 
-    writeComment(id, contentTextarea.value, (data) => {
+    writeComment(contentTextarea.value, (data) => {
       alert(data.msg);
       contentTextarea.value = "";
     });
@@ -184,18 +180,16 @@ function PostCommentWrite({
 }
 
 function PostCommentList({
-  id,
   postCommentsState,
 }: {
-  id: number;
   postCommentsState: ReturnType<typeof usePostComments>;
 }) {
   const { postComments, deleteComment: _deleteComment } = postCommentsState;
 
   const deleteComment = (commentId: number) => {
-    if (!confirm(`${id}번 댓글을 정말로 삭제하시겠습니까?`)) return;
+    if (!confirm(`${commentId}번 댓글을 정말로 삭제하시겠습니까?`)) return;
 
-    _deleteComment(id, commentId, (data) => {
+    _deleteComment(commentId, (data) => {
       alert(data.msg);
     })
   };
@@ -230,17 +224,15 @@ function PostCommentList({
 }
 
 function PostCommentWriteAndList({
-  id,
   postCommentsState,
 }: {
-  id: number;
   postCommentsState: ReturnType<typeof usePostComments>;
 }) {
   return (
     <>
-      <PostCommentWrite id={id} postCommentsState={postCommentsState} />
+      <PostCommentWrite postCommentsState={postCommentsState} />
 
-      <PostCommentList id={id} postCommentsState={postCommentsState} />
+      <PostCommentList postCommentsState={postCommentsState} />
     </>
   );
 }
@@ -258,7 +250,7 @@ export default function Page() {
 
       <PostInfo postState={postState} />
 
-      <PostCommentWriteAndList id={id} postCommentsState={postCommentsState} />
+      <PostCommentWriteAndList postCommentsState={postCommentsState} />
     </>
   );
 }
