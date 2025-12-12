@@ -183,7 +183,7 @@ function PostCommentWrite({
   );
 }
 
-function PostCommentWriteAndList({
+function PostCommentList({
   id,
   postCommentsState,
 }: {
@@ -200,17 +200,17 @@ function PostCommentWriteAndList({
     })
   };
 
+  if (postComments == null) return <div>로딩중...</div>;
+
   return (
     <>
-      <PostCommentWrite id={id} postCommentsState={postCommentsState} />
-
       <h2>댓글 목록</h2>
 
-      {postComments != null && postComments.length == 0 && (
+      {postComments.length == 0 && (
         <div>댓글이 없습니다.</div>
       )}
 
-      {postComments != null && postComments.length > 0 && (
+      {postComments.length > 0 && (
         <ul>
           {postComments.map((comment) => (
             <li key={comment.id}>
@@ -225,6 +225,22 @@ function PostCommentWriteAndList({
           ))}
         </ul>
       )}
+    </>
+  );
+}
+
+function PostCommentWriteAndList({
+  id,
+  postCommentsState,
+}: {
+  id: number;
+  postCommentsState: ReturnType<typeof usePostComments>;
+}) {
+  return (
+    <>
+      <PostCommentWrite id={id} postCommentsState={postCommentsState} />
+
+      <PostCommentList id={id} postCommentsState={postCommentsState} />
     </>
   );
 }
